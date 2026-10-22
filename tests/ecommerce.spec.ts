@@ -51,4 +51,12 @@ test.describe('Automation Exercise - QA Lab', () => {
     ).toBeVisible();
   });
 
+  test('QA-005: Contact Us page is accessible', async ({ page }) => {
+    await page.goto('/contact_us');
+
+    await expect(
+      page.getByText('Get In Touch', { exact: false }).first()
+    ).toBeVisible();
+  });
+
 });
