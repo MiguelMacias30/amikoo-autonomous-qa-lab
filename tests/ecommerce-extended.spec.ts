@@ -83,9 +83,22 @@ test.describe('Automation Exercise - Extended QA Lab', () => {
   });
 
   test('QA-010: Cart page is accessible and shows the cart table', async ({ page }) => {
-    await page.goto('/view_cart');
+    // The cart table (#cart_info_table) is only rendered when the cart contains
+    // at least one item. Add a product first so the table is present on /view_cart.
+    await page.goto('/products');
 
-    // The cart page must load with its table structure.
+    // Hover over the first product card to reveal the "Add to cart" overlay.
+    const firstProduct = page.locator('.product-image-wrapper').first();
+    await firstProduct.hover();
+    await firstProduct.getByText('Add to cart').first().click();
+
+    // Dismiss the "Added!" confirmation modal by clicking "Continue Shopping".
+    const continueBtn = page.getByText('Continue Shopping', { exact: false }).first();
+    await continueBtn.waitFor({ state: 'visible', timeout: 5000 });
+    await continueBtn.click();
+
+    // Navigate to the cart page and verify the table is rendered.
+    await page.goto('/view_cart');
     await expect(page.locator('#cart_info_table')).toBeVisible();
   });
 
